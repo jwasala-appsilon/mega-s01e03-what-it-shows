@@ -1,0 +1,45 @@
+---
+layout: runbook
+title: '#4471 · two date problems in one ticket'
+owner: Jakub Wąsala
+status: proposed
+reviewed: 2026-10-29
+signature: Jakub Wąsala
+---
+
+<script>
+  import Incident4471Summary from '#lib/kb/Incident4471Summary.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+The desk merged 412 unique reports into #4471. The export contains 427 rows because its pages
+overlap: 15 report IDs appear twice. Grouping the unique reports by tenant locale and booking
+form, rather than intake tag or subject, reveals two problems.
+
+<Incident4471Summary />
+
+## Parser: 379 reports
+
+The shared parser reads dates month first for day-first tenants. Bookings and calendar invites
+can land on a different date. This is the majority cause assigned to #4471. It spans app,
+email, and form reports across 11 tenants. Fix the parser and verify day-first locales with
+dates whose day and month can both be read as a month.
+
+## Form hint: 33 reports
+
+Booking-v3 shows `MM/DD/YYYY` to people whose tenant uses a day-first locale. A person entering
+the date shown by the hint can have it read in their tenant's order. These are form reports
+from Alder Physio, Copper Studio, and Pale Harbour. Correct the hint and verify form entry
+separately from the parser fix.
+
+## Triage
+
+The accepted subject-only duplicate rule merged distinct causes into #4471. Intake tags also
+disagree with the cause for some reports. Classify by tenant locale, booking form, and channel;
+deduplicate by report ID before counting. The five reports in `desk-notes.json` that were read
+as one-day moves stay under their tenant-derived cause.
+
+The desk is still working. Recheck the live ticket and newer reports before treating these
+export counts as current.
+
+<RenderStamp {signature} />
