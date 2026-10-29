@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · two date problems in one ticket'
 owner: Jakub Wąsala
-status: proposed
+status: resolved
 reviewed: 2026-10-29
 signature: Jakub Wąsala
 ---
@@ -16,21 +16,24 @@ The desk merged 412 unique reports into #4471. The export contains 427 rows beca
 overlap: 15 report IDs appear twice. Grouping the unique reports by tenant locale and booking
 form, rather than intake tag or subject, reveals two problems.
 
+Engineering closed #4471 on 5 October. The parser was fixed (`fix(dates): parse dd/mm for eu
+locales`). The form hint will not be fixed because booking-v3 was retired.
+
 <Incident4471Summary />
 
 ## Parser: 379 reports
 
-The shared parser reads dates month first for day-first tenants. Bookings and calendar invites
-can land on a different date. This is the majority cause assigned to #4471. It spans app,
-email, and form reports across 11 tenants. Fix the parser and verify day-first locales with
+The shared parser read dates month first for day-first tenants. Bookings and calendar invites
+could land on a different date. This was the majority cause assigned to #4471. It spans app,
+email, and form reports across 11 tenants. Verify the parser fix in day-first locales with
 dates whose day and month can both be read as a month.
 
 ## Form hint: 33 reports
 
-Booking-v3 shows `MM/DD/YYYY` to people whose tenant uses a day-first locale. A person entering
-the date shown by the hint can have it read in their tenant's order. These are form reports
-from Alder Physio, Copper Studio, and Pale Harbour. Correct the hint and verify form entry
-separately from the parser fix.
+Booking-v3 showed `MM/DD/YYYY` to people whose tenant uses a day-first locale. A person entering
+the date shown by the hint could have it read in their tenant's order. These are form reports
+from Alder Physio, Copper Studio, and Pale Harbour. Keep this cause separate from the parser
+fix in the incident record; booking-v3 has since been retired.
 
 ## Triage
 
@@ -39,7 +42,6 @@ disagree with the cause for some reports. Classify by tenant locale, booking for
 deduplicate by report ID before counting. The five reports in `desk-notes.json` that were read
 as one-day moves stay under their tenant-derived cause.
 
-The desk is still working. Recheck the live ticket and newer reports before treating these
-export counts as current.
+These counts describe the export through 4 October, not reports received after it.
 
 <RenderStamp {signature} />
